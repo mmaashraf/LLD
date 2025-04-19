@@ -18,4 +18,5 @@ public interface MealBuilder {
     void removeIngreds(String name);
     int getTotalCost();
     void reset();
+    void setMealType(String type);
 }

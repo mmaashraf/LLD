@@ -1,0 +1,69 @@
+## Practice
+
+# **Design a Meal Ordering System for a Restaurant**
+
+You need to design a **Meal Ordering System** for a restaurant. The system should allow customers to order meals, manage the ingredients for those meals, and keep track of the meals being prepared.
+
+Initial thoughts:
+
+- Customer, Order, Ingredients, Meal
+- customer can place an order
+- an order consists of a one or more meals
+- a meal can be made of any ingredients of their choice
+- a meal can be of some types - veg, non-veg, gluten-free, vegan
+
+- Builder pattern for constructing a meal
+- Meal can be of different types - this could be abstract factory
+    - All Meal consists of ingredients, a cost associated.
+    - Ingredients can be of different kinds,
+        - all have a name, quality
+- Singleton pattern for 1 active order at a time
+
+---
+
+- for builder pattern to work,
+    - there should be common interface for methods to construct the product
+    - and the concrete BUILDER implementation should implement the interface supporting resets(), constructs, and return the product
+- All meals have common methods ( add/remove ingreds, totalCost, setTypeofMeal) for them
+    - so those can be moved to an builder interface
+- The abstract factory
+    - is per meal type
+    - it has a method CreateMeal: will return a Product
+        - The concrete factories will have the actual implementation of builders, along with the methods for instances.
+- In this implementation of mine, as the abstract factory expects a standard return type, i can have a meal type interface.
+    - Also, in builder pattern there is a director, that depending on choice on client, uses the builder to execute a series of steps and creates the product.
+    - In this, I move the part of builder executing steps, to the concrete factory implementation, where interface builder is the formal param and actual param would be concrete implementation of the builder.
+        - Here the builders return a standard type i.e. Meal interface, which is the product of the factory.
+
+> - The **Builder** is only responsible for **assembling the meal step by step**. It calls methods on the **meal object** to add ingredients, but it does **not manage** or **modify** the meal's state once it is done.
+> 
+> - The **Meal** object (like `VeganMeal`) is responsible for **managing its state**—adding and removing ingredients, calculating the cost, and providing the meal description.
+- Project structure
+    - Concrete implementation of Meal Interface, like veganmeal
+        - will have cost, list of ingredients
+        - in concrete methods for add or more, just add or remove the ingreident, which happens to be type string from the list
+        - Raises a question - should the cost of each meal be fixed? no matter the number of ingreidents.
+            - there can be fixed base cost for a meal, and based on add or remove, the cost can be incr or decr by 1
+        - when implementing the concrete builder, for getProduct or reset, there needs to be reference to the product. for this usecase, it can be the Meal as the reference field, that points to a concrete meal i.e. veganMeal
+        - for the concrete factory, it will take in a builder, but since we have to follow liskov’s principle, it is correct to refer the interface than the concrete class
+        - Now for the client,
+            - Based on the meal type, the concrete builder is instantiated, and passed to the concrete meal factory. which produces a meal . and it can be customized further if needed using the methods add or remove on the meal.
+            
+    
+    ```
+    meal-ordering-system/
+    ├── src/
+    │   ├── builder/
+    │   │   ├── MealBuilder.java
+    │   │   ├── VeganMealBuilder.java
+    │   ├── factory/
+    │   │   ├── MealFactory.java
+    │   │   ├── VeganMealFactory.java
+    │   ├── meal/
+    │   │   ├── Meal.java
+    │   │   ├── VeganMeal.java
+    │   ├── main/
+    │   │   ├── Client.java
+    └── README.md
+    
+    ```

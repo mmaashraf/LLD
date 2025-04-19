@@ -6,4 +6,5 @@ public interface Meal {
     void addIngrd(String name);
     void removeIngrd(String name);
     int getTotalCost();
+    String getIngrd();
 }
